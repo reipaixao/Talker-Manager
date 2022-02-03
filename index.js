@@ -40,7 +40,7 @@ app.get('/talker', async (_req, res) => {
   res.status(200).json(talkers);
 });
 
-// 2 - Crie o endpoint GET /talker/:id
+// 2 - Crie o endpoint GET /talker/:id;
 app.get('/talker/:id', async (req, res) => {
   const { id } = req.params;
   const talkersArray = await fs.readFile(talkersJson, 'utf-8');
