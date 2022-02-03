@@ -56,6 +56,7 @@ Neste projeto, verificamos se você é capaz de:
 - Escrever APIs utilizando Node e Express;
 - Entender a estrutura de uma aplicação Express e como organizar seu código;
 - Criar rotas e aplicar middlewares.
+
 ---
 
 # Entregáveis
@@ -217,12 +218,14 @@ Ex: Para executar o teste referente ao **login**, basta digitar `npm test login`
 2. O arquivo `talker.json` será utilizado como base para fazer as requisições da API. As operações de leitura e escrita dos requisitos devem ser feitas nesse arquivo usando os métodos da biblioteca `fs`.
 
 3. Há um arquivo `index.js` no repositório. Não remova, nele, o seguinte trecho de código:
-  ```javascript
-  app.get('/', (_request, response) => {
-    response.status(HTTP_OK_STATUS).send();
-  });
-  ```
-  Isso está configurado para o avaliador funcionar.
+
+```javascript
+app.get("/", (_request, response) => {
+  response.status(HTTP_OK_STATUS).send();
+});
+```
+
+Isso está configurado para o avaliador funcionar.
 
 4. Caso os testes falhem seu arquivo `talker.json` não será restaurado, para isso utilize `npm run restore`.
 
@@ -266,7 +269,6 @@ Ex: Para executar o teste referente ao **login**, basta digitar `npm test login`
 ```
 
 - Caso não exista nenhuma pessoa palestrante cadastrada o endpoint deve retornar um array vazio e o `status 200`.
-
 
 ### 2 - Crie o endpoint GET `/talker/:id`
 
@@ -452,7 +454,8 @@ Ex: Para executar o teste referente ao **login**, basta digitar `npm test login`
         "message": "O campo \"talk\" é obrigatório e \"watchedAt\" e \"rate\" não podem ser vazios"
       }
       ```
-- Caso esteja tudo certo, retorne o `status 201`  e a pessoa cadastrada.
+
+- Caso esteja tudo certo, retorne o `status 201` e a pessoa cadastrada.
 - O endpoint deve retornar o `status 201` e a pessoa palestrante que foi cadastrada, da seguinte forma:
 
   ```json
@@ -485,7 +488,7 @@ Ex: Para executar o teste referente ao **login**, basta digitar `npm test login`
     }
   }
   ```
-  
+
 - A requisição deve ter o token de autenticação nos headers, no campo `authorization`.
 
   - Caso o token não seja encontrado retorne um código de `status 401`, com o seguinte corpo:
@@ -571,13 +574,14 @@ Ex: Para executar o teste referente ao **login**, basta digitar `npm test login`
         "message": "O campo \"talk\" é obrigatório e \"watchedAt\" e \"rate\" não podem ser vazios"
       }
       ```
+
 - Caso esteja tudo certo, retorne o `status 200` e a pessoa editada.
 - O endpoint deve retornar o `status 200` e a pessoa palestrante que foi editada, da seguinte forma:
 
   ```json
   {
     "id": 1,
-   "name": "Danielle Santos",
+    "name": "Danielle Santos",
     "age": 56,
     "talk": {
       "watchedAt": "22/10/2019",
