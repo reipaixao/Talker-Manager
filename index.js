@@ -93,16 +93,16 @@ app.post('/talker', authorizationF, nameF, ageF, talkF, rateF, watchedAtF, async
 });
 
 // 5 - Crie o endpoint PUT /talker/:id
-app.put('/talker/:id', authorizationF, nameF, ageF, talkF, rateF, watchedAtF, async (req, res) => {
-  const { id } = req.params;
-  const talkersArray = await fs.readFile(talkersJson, 'utf-8');
-  const talkerIndex = talkersArray.findIndex((t) => t.id === parseInt(id, 10));
-  talkersArray[talkerIndex] = req.body;
-  talkersArray[talkerIndex].id = parseInt(id, 10);
-  const talkerString = await JSON.stringify(talkersArray);
-  await fs.writeFile(talkersJson, talkerString);
-  return res.status(200).json(talkersArray[talkerIndex]);
-});
+// app.put('/talker/:id', authorizationF, nameF, ageF, talkF, rateF, watchedAtF, async (req, res) => {
+//   const { id } = req.params;
+//   const talkersArray = await fs.readFile(talkersJson, 'utf-8');
+//   const talkerIndex = talkersArray.findIndex((t) => t.id === parseInt(id, 10));
+//   talkersArray[talkerIndex] = req.body;
+//   talkersArray[talkerIndex].id = parseInt(id, 10);
+//   const talkerString = await JSON.stringify(talkersArray);
+//   await fs.writeFile(talkersJson, talkerString);
+//   return res.status(200).json(talkersArray[talkerIndex]);
+// });
 
 // 6 - Crie o endpoint DELETE /talker/:id
 app.delete('/talker/:id', authorizationF, async (req, res) => {
