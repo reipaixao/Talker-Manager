@@ -56,12 +56,12 @@ app.get('/talker/:id', async (req, res) => {
 // https://www.geeksforgeeks.org/how-to-validate-email-address-using-regexp-in-javascript/
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  const regexCodeEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-  const validate = regexCodeEmail.test(email); // Boolean
+  const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+  const emailV = regex.test(email);
   if (!email) {
     return res.status(400).json({ message: 'O campo "email" é obrigatório' });
   }
-  if (!validate) {
+  if (!emailV) {
     return res.status(400).json({ message: 'O "email" deve ter o formato "email@email.com"' });
   }
 
@@ -93,16 +93,15 @@ app.post('/talker', authorizationF, nameF, ageF, talkF, rateF, watchedAtF, async
 });
 
 // 5 - Crie o endpoint PUT /talker/:id
-// app.put('/talker/:id', authorizationF, nameF, ageF, talkF, rateF, watchedAtF, async (req, res) => {
-//   const { id } = req.params;
-//   const talkersArray = await fs.readFile(talkersJson, 'utf-8');
-//   const talkerIndex = talkersArray.findIndex((t) => t.id === parseInt(id, 10));
-//   talkersArray[talkerIndex] = req.body;
-//   talkersArray[talkerIndex].id = parseInt(id, 10);
-//   const talkerString = await JSON.stringify(talkersArray);
-//   await fs.writeFile(talkersJson, talkerString);
-//   return res.status(200).json(talkersArray[talkerIndex]);
-// });
+app.put('/talker/:id', authorizationF, nameF, ageF, talkF, rateF, watchedAtF, async (req, res) => {
+  const { id } = req.params;
+  const { age, name, talk } = req.body;
+  const talkersArray = JSON.parse(await fs.readFile(talkersJson, 'utf-8'));
+  const talkerIndex = talkersArray.findIndex((t) => t.id.toString() === id);
+  talkersArray[talkerIndex] = { ...talkersArray[talkerIndex], name, age, talk };
+  await fs.writeFile(talkersJson, JSON.stringify(talkersArray));
+  return res.status(200).json(talkersArray[talkerIndex]);
+});
 
 // 6 - Crie o endpoint DELETE /talker/:id
 app.delete('/talker/:id', authorizationF, async (req, res) => {
@@ -125,12 +124,18 @@ app.delete('/talker/:id', authorizationF, async (req, res) => {
 
 // 7 - Crie o endpoint GET /talker/search?q=searchTerm
 app.get('/talker/search', authorizationF, async (req, res) => {
-  const { q: searchTerm } = req.query;
-  const talkersArray = await JSON.parse(await fs.readFile(talkersJson, 'utf-8'));
+  const { term } = req.query;
+  const talkersArray = await fs.readFile(talkersJson, 'utf-8');
   const talkers = await JSON.parse(talkersArray);
-  if (!searchTerm) return res.status(200).json(talkers); 
+  if (!term || term === '') {
+    return res.status(200).json(talkers);
+ }
 
-  const search = talkers.filter((t) => t.name.includes(searchTerm));
+  const filter = talkers.filter((t) => t.name.includes(term));
 
-  res.status(200).json(search);  
+  if (!filter) {
+    return res.status(200).json([]);
+  }
+
+  return res.status(200).json(filter);
 });

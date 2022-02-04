@@ -1,7 +1,7 @@
 const ageF = (req, res, next) => {
   const { age } = req.body;
 
-  if (age === undefined || age === '') {
+  if (age === undefined || age === '' || age === 0) {
       return res.status(400).json({ message: 'O campo "age" é obrigatório' });
   }
     
