@@ -7,10 +7,10 @@ const token = require('./middlewares/token');
 console.log(token);
 const ageF = require('./middlewares/age');
 const talkF = require('./middlewares/talk');
-const authorizationF = require('./middlewares/authorization');
 const nameF = require('./middlewares/name');
 const watchedAtF = require('./middlewares/watchedAt');
 const rateF = require('./middlewares/rate');
+const validateToken = require('./middlewares/validateToken');
 
 const talkersJson = './talker.json';
 
@@ -38,6 +38,24 @@ app.get('/talker', async (_req, res) => {
   const talkersArray = await fs.readFile(talkersJson, 'utf-8');
   const talkers = await JSON.parse(talkersArray);
   res.status(200).json(talkers);
+});
+
+// 7 - Crie o endpoint GET /talker/search?q=searchTerm
+app.get('/talker/search', validateToken, async (req, res) => {
+  const { term } = req.query;
+  const talkersArray = await fs.readFile(talkersJson, 'utf-8');
+  const talkers = await JSON.parse(talkersArray);
+  if (!term || term === '') {
+    return res.status(200).json(talkers);
+ }
+
+  const filter = talkers.filter((t) => t.name.includes(term));
+
+  if (!filter) {
+    return res.status(200).json([]);
+  }
+
+  return res.status(200).json(filter);
 });
 
 // 2 - Crie o endpoint GET /talker/:id;
@@ -76,7 +94,7 @@ app.post('/login', async (req, res) => {
 });
 
 // 4 - Crie o endpoint POST /talker
-app.post('/talker', authorizationF, nameF, ageF, talkF, rateF, watchedAtF, async (req, res) => {
+app.post('/talker', validateToken, nameF, ageF, talkF, rateF, watchedAtF, async (req, res) => {
   const { age, name, talk } = await req.body;
   const talkersArray = await fs.readFile(talkersJson, 'utf-8');
   const talkers = await JSON.parse(talkersArray);
@@ -93,7 +111,7 @@ app.post('/talker', authorizationF, nameF, ageF, talkF, rateF, watchedAtF, async
 });
 
 // 5 - Crie o endpoint PUT /talker/:id
-app.put('/talker/:id', authorizationF, nameF, ageF, talkF, rateF, watchedAtF, async (req, res) => {
+app.put('/talker/:id', validateToken, nameF, ageF, talkF, rateF, watchedAtF, async (req, res) => {
   const { id } = req.params;
   const { age, name, talk } = req.body;
   const talkersArray = JSON.parse(await fs.readFile(talkersJson, 'utf-8'));
@@ -104,7 +122,7 @@ app.put('/talker/:id', authorizationF, nameF, ageF, talkF, rateF, watchedAtF, as
 });
 
 // 6 - Crie o endpoint DELETE /talker/:id
-app.delete('/talker/:id', authorizationF, async (req, res) => {
+app.delete('/talker/:id', validateToken, async (req, res) => {
   const { id } = req.params;
   const talkersArray = await fs.readFile(talkersJson, 'utf-8');
   const talkers = await JSON.parse(talkersArray);
@@ -120,22 +138,4 @@ app.delete('/talker/:id', authorizationF, async (req, res) => {
 
   await fs.writeFile(talkersJson, JSON.stringify(talkersArray));
   res.status(204).end();
-});
-
-// 7 - Crie o endpoint GET /talker/search?q=searchTerm
-app.get('/talker/search', authorizationF, async (req, res) => {
-  const { term } = req.query;
-  const talkersArray = await fs.readFile(talkersJson, 'utf-8');
-  const talkers = await JSON.parse(talkersArray);
-  if (!term || term === '') {
-    return res.status(200).json(talkers);
- }
-
-  const filter = talkers.filter((t) => t.name.includes(term));
-
-  if (!filter) {
-    return res.status(200).json([]);
-  }
-
-  return res.status(200).json(filter);
 });
